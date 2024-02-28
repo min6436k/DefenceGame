@@ -9,30 +9,30 @@ public class GuardianBuildManager : MonoBehaviour
 {
     public GameObject[] Tiles;
 
-    public GameObject CurrentFocusTile;
+    public GameObject CurrentFocusTile; //현재 선택된 타일
     public GameObject GuardianPrefab;
     public GameObject BuildIconPrefab;
 
-    public Material BuildCanMat;
-    public Material BuildCanNotMat;
+    public Material BuildCanMat; //건축할 수 있을 때의 마테리얼
+    public Material BuildCanNotMat; //건축할 수 없을 때의 마테리얼
 
-    public float BuildDeltaY = 0f;
-    public float FocusTileDistance = 0.05f;
+    public float BuildDeltaY = 0f; //건축 시 가디언의 y좌표에 더할 값
+    public float FocusTileDistance = 0.05f; //포커스로 인식할 거리
 
-    public int NormalGuaridanCost = 50;
+    public int NormalGuaridanCost = 50; //가디언의 가격
 
     public UnityEvent OnBuild;
 
     void Start()
     {
-        Tiles = GameObject.FindGameObjectsWithTag("Tile");
-        BuildIconPrefab = Instantiate(BuildIconPrefab, transform.position, Quaternion.Euler(90, 0, 0));
-        BuildIconPrefab.gameObject.SetActive(false);
+        Tiles = GameObject.FindGameObjectsWithTag("Tile"); //씬에 있는 Tile 태그를 가진 오브젝트들을 배열에 할당
+        BuildIconPrefab = Instantiate(BuildIconPrefab, transform.position, Quaternion.Euler(90, 0, 0)); //빌드 아이콘 프리팹을 생성
+        BuildIconPrefab.gameObject.SetActive(false); //생성한 프리팹을 비활성화
     }
 
     void Update()
     {
-        bool bisUpgrading = GameManager.Inst.guardianUpgradeManager.bIsUpgrading;
+        bool bisUpgrading = GameManager.Inst.guardianUpgradeManager.bIsUpgrading; //guardianUpgradeManager에서 업그레드가 가능한지의 변수 할당
 
         UpdateFindFocusTile();
         if (!bisUpgrading)
@@ -44,21 +44,18 @@ public class GuardianBuildManager : MonoBehaviour
 
     private void UpdateFindFocusTile()
     {
-        CurrentFocusTile = null;
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane));
-        mousePosition.y = 0f;
+        CurrentFocusTile = null; //현재 포커스중인 타일 null로 초기화
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
 
-        foreach (var tile in Tiles)
+        RaycastHit hit;
+        if (Physics.Raycast(mousePosition, Camera.main.transform.forward, out hit, 500,LayerMask.GetMask("Tile")))
         {
-            Vector3 tilePos = tile.transform.position;
-            tilePos.y = 0f;
-
-            if (Vector3.Distance(mousePosition, tilePos) <= FocusTileDistance)
-            {
-                CurrentFocusTile = tile;
-                break;
-            }
+            if (hit.collider.CompareTag("Tile")) CurrentFocusTile = hit.collider.gameObject;
         }
+
+        //mousePosition변수에 마우스포인터의 위치를 월드 좌표로 바꾼 x,y축과, 마우스포인터에서 카메라에 표시되는 가장 가까운 z좌표를 할당
+
+
     }
 
     private void UpdateBuildImage()
@@ -67,7 +64,7 @@ public class GuardianBuildManager : MonoBehaviour
 
         if (CurrentFocusTile)
         {
-            Tile tile = CurrentFocusTile.GetComponent<Tile>(); 
+            Tile tile = CurrentFocusTile.GetComponent<Tile>();
             if (!tile.CheckIsOwned())
             {
                 Vector3 position = tile.transform.position;

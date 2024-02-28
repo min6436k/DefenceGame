@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Level2Guardian
+  m_EditorClassIdentifier: Assembly-CSharp::GuardianStatus
+  AttackCycleTime: 0.5
+  AttackRadius: 10
+  Damage: 2
+  MaxTargetCount: 1
+  UpgradeCost: 100
+  Color: {r: 0.6415094, g: 0.18458524, b: 0.18458524, a: 1}

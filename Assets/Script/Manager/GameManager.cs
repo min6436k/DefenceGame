@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if(Inst == null)
+        if(Inst == null) //싱글톤 패턴
         {
             Inst = this;
         }
@@ -30,6 +30,6 @@ public class GameManager : MonoBehaviour
     }
     public void EnemyDead(int coin)
     {
-        playerCharacter.Coin += coin;
+        playerCharacter.Coin += coin; //플레이어의 코인 증가
     }
 }
