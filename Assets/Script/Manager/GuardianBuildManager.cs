@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -22,6 +23,7 @@ public class GuardianBuildManager : MonoBehaviour
     public int NormalGuaridanCost = 50; //가디언의 가격
 
     public UnityEvent OnBuild;
+
 
     void Start()
     {
@@ -45,87 +47,92 @@ public class GuardianBuildManager : MonoBehaviour
     private void UpdateFindFocusTile()
     {
         CurrentFocusTile = null; //현재 포커스중인 타일 null로 초기화
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
 
-        RaycastHit hit;
-        if (Physics.Raycast(mousePosition, Camera.main.transform.forward, out hit, 500,LayerMask.GetMask("Tile")))
+
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit,100, LayerMask.GetMask("Tile")))
         {
             if (hit.collider.CompareTag("Tile")) CurrentFocusTile = hit.collider.gameObject;
         }
 
-        //mousePosition변수에 마우스포인터의 위치를 월드 좌표로 바꾼 x,y축과, 마우스포인터에서 카메라에 표시되는 가장 가까운 z좌표를 할당
 
+        //ScreenToWorldPoint 방식
 
+        //Vector3 mousePosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.farClipPlane));
+
+        //if (Physics.Raycast(Camera.main.transform.position, (mousePosition - Camera.main.transform.position).normalized, out RaycastHit hit, 500, LayerMask.GetMask("Tile")))
+        //{
+        //    if (hit.collider.CompareTag("Tile")) CurrentFocusTile = hit.collider.gameObject;
+        //}
     }
 
     private void UpdateBuildImage()
     {
-        bool bFocusTile = false;
+        bool bFocusTile = false; //현재 포커스된 타일 유무를 false로 초기홤
 
-        if (CurrentFocusTile)
+        if (CurrentFocusTile) //현재 포커스된 타일이 있다면
         {
-            Tile tile = CurrentFocusTile.GetComponent<Tile>();
-            if (!tile.CheckIsOwned())
+            Tile tile = CurrentFocusTile.GetComponent<Tile>(); //해당 타일 오브젝트의 타일 스크립트 할당
+            if (!tile.CheckIsOwned()) //해당 타일에 가디언이 없을 시
             {
                 Vector3 position = tile.transform.position;
-                position.y += BuildDeltaY;
-                BuildIconPrefab.transform.position = position;
-                bFocusTile = true;
+                position.y += BuildDeltaY; //해당 타일의 위치에 BuildDeltaY를 더해줌
+                BuildIconPrefab.transform.position = position; //빌드아이콘의 위치를 구한 position으로 변경
+                bFocusTile = true; //현재 포커스된 타일 유무를 true로 변경
 
-                bool bCanBuild = GameManager.Inst.playerCharacter.CanUseCoin(NormalGuaridanCost);
-                Material mat = bCanBuild ? BuildCanMat : BuildCanNotMat;
-                BuildIconPrefab.GetComponent<MeshRenderer>().material = mat;
+                bool bCanBuild = GameManager.Inst.playerCharacter.CanUseCoin(NormalGuaridanCost); //가디언을 제작할 만큼의 코인이 있는지 검사
+                Material mat = bCanBuild ? BuildCanMat : BuildCanNotMat; //마테리얼 변수에 bCanBuild가 true라면 BuildCanMat이미지,false라면 BuildCanNotMat 이미지 할당
+                BuildIconPrefab.GetComponent<MeshRenderer>().material = mat; //빌드아이콘 오브젝트에 마테리얼 적용
             }
         }
 
-        if (bFocusTile)
+        if (bFocusTile) //현재 포커스된 타일이 있다면
         {
-            BuildIconPrefab.gameObject.SetActive(true);
+            BuildIconPrefab.gameObject.SetActive(true); //빌드아이콘 활성화
         }
         else
         {
-            DeActivateBuildImage();
+            DeActivateBuildImage(); 
         }
     }
 
     private void DeActivateBuildImage()
     {
-        BuildIconPrefab.gameObject.SetActive(false);
+        BuildIconPrefab.gameObject.SetActive(false);//빌드아이콘 비활성화
     }
 
     // TODO : Click Interface? 
 
     void CheckToBuildGuardian()
     {
-        if (CurrentFocusTile != null)
+        if (CurrentFocusTile != null) //포커스된 타일이 null이 아니라면
         {
-            Tile tile = CurrentFocusTile.GetComponent<Tile>();
-            PlayerCharacter player = GameManager.Inst.playerCharacter;
-            if (!tile.CheckIsOwned() && player.CanUseCoin(NormalGuaridanCost))
+            Tile tile = CurrentFocusTile.GetComponent<Tile>();//해당 타일 오브젝트의 타일 스크립트 할당
+            PlayerCharacter player = GameManager.Inst.playerCharacter; //플레이어 캐릭터 스크립트 할당
+            if (!tile.CheckIsOwned() && player.CanUseCoin(NormalGuaridanCost)) //해당 타일에 가디언이 없고 제작할 코인도 있을 경우
             {
-                player.UseCoin(NormalGuaridanCost);
+                player.UseCoin(NormalGuaridanCost); //코인 감소
 
-                Vector3 position = BuildIconPrefab.transform.position;
-                GameObject guardianInst = Instantiate(GuardianPrefab, position, Quaternion.identity);
+                Vector3 position = BuildIconPrefab.transform.position; //가디언을 생성할 포지션
+                GameObject guardianInst = Instantiate(GuardianPrefab, position, Quaternion.identity); //가디언 프리팹 생성
 
-                tile.OwnGuardian = guardianInst.GetComponent<Guardian>();
+                tile.OwnGuardian = guardianInst.GetComponent<Guardian>(); //타일의 변수에 생성한 가디언의 스크립트 할당
 
-                OnBuild.Invoke();
+                OnBuild.Invoke(); //이벤트 호출
                 DeActivateBuildImage();
 
                 return;
             }
 
-            if (tile && tile.OwnGuardian)
+            if (tile && tile.OwnGuardian) //해당 타일에 가디언이 이미 있을 경우
             {
-                GameManager.Inst.guardianUpgradeManager.UpgradeGuardian(tile.OwnGuardian);
+                GameManager.Inst.guardianUpgradeManager.UpgradeGuardian(tile.OwnGuardian); //UpgradeGuardian함수 호출
             }
         }
     }
 
     private void UpdateKeyInput()
     {
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0)) //마우스 클릭 감지
         {
             CheckToBuildGuardian();
         }

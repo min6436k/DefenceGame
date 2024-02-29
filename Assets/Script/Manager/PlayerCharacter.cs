@@ -25,7 +25,6 @@ public class PlayerCharacter : MonoBehaviour
         {
             GameManager.Inst.GameDefeat(); //게임종료 함수 실행
         }
-        Debug.Log(_heart);
     }
     public void UseCoin(int coin)
     {

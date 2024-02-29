@@ -41,7 +41,10 @@ public class GuardianUpgradeManager : MonoBehaviour
         AttackRangeImg.rectTransform.position = attackImgPos;
 
         UpgradeIconButton.transform.localScale = new Vector3(1 / attackRadius, 1 / attackRadius, 1);
-        UpgradeIconButton.onClick.AddListener(() => Upgrade(_currentUpgradeGuardian));
+        UpgradeIconButton.onClick.AddListener(() => {
+            Upgrade(_currentUpgradeGuardian);
+            Debug.Log("C");
+            });
         bIsUpgrading = true;
     }
 

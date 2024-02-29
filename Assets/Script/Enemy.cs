@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
         Vector3 TargetPosition = _currentWayPoint.transform.position; 
         TargetPosition.y = transform.position.y; //목표 포인트와의 거리를 잴 때 필요없는 y값을 똑같이 만듬
 
-        if (Vector3.Distance(transform.position , TargetPosition) <= 0.02f) //목표와의 거ㅏ리가 0.02이하라면
+        if (Vector3.Distance(transform.position , TargetPosition) <= 0.05f) //목표와의 거리가 0.02이하라면
         {
             if(_wayPointCount >= WayPoints.Length - 1) //지난 포인트의 수가 WayPoints의 총 갯수-1 이상일 때 = 현재 닿은 포인트가 마지막 포인트일때
             {
