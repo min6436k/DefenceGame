@@ -869,9 +869,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WayPoints: []
-  MaxHp: 5
-  MoveSpeed: 3
-  StealCoin: 100
+  MaxHp: 3
+  MoveSpeed: 2.5
+  StealCoin: 50
   Damage: 1
 --- !u!136 &7823337028456628283
 CapsuleCollider:

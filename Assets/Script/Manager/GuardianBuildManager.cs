@@ -34,7 +34,7 @@ public class GuardianBuildManager : MonoBehaviour
 
     void Update()
     {
-        bool bisUpgrading = GameManager.Inst.guardianUpgradeManager.bIsUpgrading; //guardianUpgradeManager에서 업그레드가 가능한지의 변수 할당
+        bool bisUpgrading = GameManager.Inst.guardianUpgradeManager.bIsUpgrading; //guardianUpgradeManager에서 업그레드 대기중인지 변수 할당
 
         UpdateFindFocusTile();
         if (!bisUpgrading)
@@ -104,7 +104,7 @@ public class GuardianBuildManager : MonoBehaviour
 
     void CheckToBuildGuardian()
     {
-        if (CurrentFocusTile != null) //포커스된 타일이 null이 아니라면
+        if (CurrentFocusTile != null && !GameManager.Inst.guardianUpgradeManager.bIsUpgrading) //포커스된 타일이 null이 아니라면
         {
             Tile tile = CurrentFocusTile.GetComponent<Tile>();//해당 타일 오브젝트의 타일 스크립트 할당
             PlayerCharacter player = GameManager.Inst.playerCharacter; //플레이어 캐릭터 스크립트 할당
@@ -132,7 +132,7 @@ public class GuardianBuildManager : MonoBehaviour
 
     private void UpdateKeyInput()
     {
-        if (Input.GetMouseButtonUp(0)) //마우스 클릭 감지
+        if (Input.GetMouseButtonDown(0)) //마우스 클릭 감지
         {
             CheckToBuildGuardian();
         }

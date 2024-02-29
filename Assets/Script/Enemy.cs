@@ -2,6 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+namespace EnemyEnum
+{
+    public enum EnemyEnum{
+        Noaml,
+        Upgrade,
+        Special
+    }
+}
+
 public class Enemy : MonoBehaviour
 {
     private GameObject _currentWayPoint; //목표 포인트

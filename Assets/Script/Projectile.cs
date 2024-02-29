@@ -25,6 +25,7 @@ public class Projectile : MonoBehaviour
 
         Vector3 dir = Target.transform.position - transform.position;
         dir.Normalize();
+        dir.y = 0;
 
         transform.position += dir * MoveSpeed * Time.deltaTime;
     }
