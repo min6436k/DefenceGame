@@ -65,11 +65,14 @@ public class EnemySpawner : MonoBehaviour
         WaveUI.SetActive(true);
 
 
+
         foreach (EnemyType type in WaveInfo[Wave].EnemyList)
         {
             for(int i = 0; i < type.Count; i++)
             {
-            _waveSpawnEnemy.Add(type.EnemyPrefab);
+                _spawnCount++;
+                _waveSpawnEnemy.Add(type.EnemyPrefab);
+                Debug.Log("A");
             }
         }
 
